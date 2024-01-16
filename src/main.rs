@@ -7,9 +7,11 @@ async fn main() {
     let mut conn = PgConnection::establish("postgresql://postgres:postgres@localhost:5552/prova").unwrap();
 
     
-    let result = transaction_async(&mut conn, |cn| { 
-       diesel::sql_query("SELECT name from my_table ")
+    let result = transaction_async(&mut conn, |cn: &mut PgConnection| {
+        Box::pin(async move {
+            diesel::sql_query("SELECT name from my_table ")
             .load::<MyTable>(cn)
+        })
     }).await;
     println!("RESULT: {result:?}")
 }

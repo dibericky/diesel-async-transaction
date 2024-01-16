@@ -1,5 +1,7 @@
 use diesel::connection::{AnsiTransactionManager, TransactionManager};
 use diesel::{PgConnection, result::Error, Connection, RunQueryDsl, deserialize::{FromSqlRow, QueryableByName}};
+use schema::my_table;
+mod schema;
 
 pub async fn transaction_async<R, E, F, Fut>(conn: &mut PgConnection, callback: F) -> Result<R, TransactionError<E>>
     where F : FnOnce(&mut PgConnection) -> Fut, Fut: std::future::Future<Output=Result<R, E>>, E: std::fmt::Debug {
@@ -23,11 +25,11 @@ pub async fn transaction_async<R, E, F, Fut>(conn: &mut PgConnection, callback: 
     }
 }
 
-// #[derive(FromSqlRow, Debug, QueryableByName)]
-// #[diesel(table_name = my_table)]
-// pub struct MyTable {
-//     name: String
-// }
+#[derive(FromSqlRow, Debug, QueryableByName)]
+#[diesel(table_name = my_table)]
+pub struct MyTable {
+    name: String
+}
 
 #[derive(Debug)]
 enum TransactionError<E> where E: std::fmt::Debug {

@@ -10,6 +10,8 @@ async fn main() {
     let result = transaction_async(&mut conn, |cn: &mut PgConnection| {
         Box::pin(async move {
             diesel::sql_query("UPDATE my_table SET name = 'ciaoooooo' where name = 'ciao2'")
+            .execute(cn).unwrap();
+            diesel::sql_query("UPDATE my_table SET name = 'ciaoooooo' where name = 'ciao1'")
             .execute(cn)
         })
     }).await;
